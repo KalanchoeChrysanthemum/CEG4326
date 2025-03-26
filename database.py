@@ -1,5 +1,16 @@
 import lmdb
 
-env = lmdb.open('test.db', map_size=10485760)
+MEGABYTE = 1_048_576
+DATABASE_NAME = 'test.db'
+DATABASE_SIZE = 10 * MEGABYTE
+
+def db_init():
+    env = lmdb.open(DATABASE_NAME, map_size=DATABASE_SIZE)
 
 
+def main():
+    db_init()
+    print('Creating test database...')
+
+if __name__ == '__main__':
+    main()
