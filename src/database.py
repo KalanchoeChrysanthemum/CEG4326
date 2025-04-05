@@ -21,15 +21,12 @@ def query_db(db, rfid: str) -> str:
     key = encode_data(rfid)
     with db.begin() as d:
         res = d.get(key)
-        if res is not None:
-            return res
-        else:
-            return None
+        return res if res is not None else None
 
 """
 Write test users to database.
 """
-def initialize_db(db):
+def initialize_db(db) -> None:
     key = encode_data('John')
     val = encode_data('Doe')
     with db.begin(write=True) as d:
@@ -39,10 +36,10 @@ def initialize_db(db):
 Compares the hash of the provided string (actual),
 with the expected bytes
 """
-def compare(actual: str, expected: bytes) -> bool:
+def is_valid(actual: str, expected: bytes) -> bool:
     return encode_data(actual) == expected
 
-def main():
+def main() -> None:
     with lmdb.open(DATABASE_NAME, map_size=DATABASE_SIZE) as db:
         initialize_db(db)
         
@@ -52,13 +49,11 @@ def main():
 
         res = query_db(db, rfid)
         
-        if res is None:
-            print('Invalid RFID')
+        if res is not None:
+            print('[PASS] Valid User') if is_valid(led, res) else print('[FAILED] Invalid LED Matrix')
         else:
-            if (compare(led, res)):
-                print('Success')
-            else:
-                print('Invalid LED matrix')
+            print('[FAILED] Invalid RFID')
+            
 
 
 if __name__ == '__main__':
