@@ -2,7 +2,7 @@ import lmdb
 import hashlib as hl
 
 MEGABYTE = 1_048_576
-DATABASE_NAME = 'tags.db'
+DATABASE_NAME = '../../tags.db'
 DATABASE_SIZE = 10 * MEGABYTE
 
 """
