@@ -57,7 +57,7 @@ def main() -> None:
         if not is_db_init(db):
             init_db(db, key)
 
-    with lmdb.open(DATABASE_NAME, map_size=DATABASE_SIZE) as db:
+    with lmdb.open(DATABASE_NAME, map_size=DATABASE_SIZE, readonly=True) as db:
         rfid = 'John'
         led = 'Doe'
 
