@@ -1,17 +1,21 @@
-#include <Arduino.h>
+#include <SPI.h>
+#include <MFRC522.h>
 
-#define OUTPUT_PIN 9
-#define FREQ 228000
-#define CHANNEL 0
-#define RESOLUTION 1
-#define DUTY_CYCLE 1
+#define SS_PIN 10
+#define RST_PIN 7
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+MFRC522::MIFARE_Key key;
 
 void setup() {
-  ledcSetup(0, FREQ, RESOLUTION);
-  ledcAttachPin(OUTPUT_PIN, 0);
-  ledcWrite(0, DUTY_CYCLE);
+    Serial.begin(9600);
+    SPI.begin();
+    rfid.PCD_Init();
 }
 
 void loop() {
-
+  // put your main code here, to run repeatedly:
+    if ( ! rfid.PICC_IsNewCardPresent()) {
+	return;
+    }
 }
