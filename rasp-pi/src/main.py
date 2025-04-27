@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load the cropped 4x4 LED image
-image = cv2.imread('../images/input/a3.jpg', cv2.IMREAD_GRAYSCALE)
+image = cv2.imread('../images/input/a2.jpg', cv2.IMREAD_GRAYSCALE)
 cropped = image[500:1350, 600:1600]
 #cropped = cv2.GaussianBlur(cropped, (11, 11), 0)
 _, cropped = cv2.threshold(cropped, 220, 255, cv2.THRESH_BINARY)

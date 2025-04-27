@@ -1,21 +1,21 @@
-#include <SPI.h>
-#include <MFRC522.h>
-
-#define SS_PIN 10
-#define RST_PIN 7
-
-MFRC522 rfid(SS_PIN, RST_PIN);
-MFRC522::MIFARE_Key key;
-
 void setup() {
-    Serial.begin(9600);
-    SPI.begin();
-    rfid.PCD_Init();
+  // Start the serial communication
+  Serial.begin(9600);
+  
+  // Wait for the serial communication to start
+  while (!Serial);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-    if ( ! rfid.PICC_IsNewCardPresent()) {
-	return;
-    }
+  // Sample wid and hash
+  String wid = "000000000000000000773030376D6171";
+  String hash = "55f8b969f2a7c33cfb87edaa2d1afafd";
+  
+  // Send the wid and hash over serial
+  Serial.print(wid);
+  Serial.print(",");
+  Serial.println(hash);
+  
+  // Wait for 3 seconds before sending again
+  delay(3000);
 }
