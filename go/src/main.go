@@ -12,6 +12,8 @@ import (
 
 	db "ic-hardware/database"
 	"github.com/tarm/serial"
+	"gocv.io/x/gocv"
+	"ic-hardware/vision"
 )
 
 // CONSTANTS
@@ -59,27 +61,36 @@ func VerifyUser(widHex string, hashHex string) (bool, error) {
     return true, nil
 }
 
-func process(wid, hash string) {
+func process(wid, hash string) bool {
     valid, err := VerifyUser(wid, hash)
     if err != nil {
 	log.Fatal(err)
     }
 
-    currentTime := time.Now()
-
     if valid {
-	fmt.Println("[" + currentTime.Format("01/02/2006 03:04:05 PM") + "] " + "RFID Pass")
+	    return true
     } else {
-	fmt.Println("[" + currentTime.Format("01/02/2006 03:04:05 PM") + "] " + "RFID Fail")
+	    return false
     }
 }
 
 
 func main() {
+    webcam, err := gocv.OpenVideoCapture(0)
+    if err != nil {
+	    log.Fatalf("Error opening video capture: %v", err)
+    }
+    defer webcam.Close()
+
+    time.Sleep(2 * time.Second)
+
+    inputPath := "captured.jpg"
+    outputImgPath := "output.jpg"
+
     defer db.DB.Close()
 
     config := &serial.Config{
-	Name:		"/dev/ttyACM0",
+	Name:		"/dev/cu.usbmodem1301",
 	Baud:		9600,
 	Size:		8,
 	StopBits:	serial.Stop1,
@@ -100,6 +111,8 @@ func main() {
 	    log.Fatal(err)
 	}
 
+	fmt.Println(message)
+
 	parts := strings.Split(strings.TrimSpace(message), ",")
 	if len(parts) != 2 {
 	    log.Println("Invalid message format")
@@ -109,7 +122,32 @@ func main() {
 	wid := parts[0]
 	hash := parts[1]
 
-	process(wid, hash)
+	fmt.Println("WID:", wid)
+	fmt.Println("Hash:", hash)
+
+	if (process(wid, hash)) {
+		img := gocv.NewMat()
+		defer img.Close()
+
+		if ok := webcam.Read(&img); !ok {
+			log.Fatalf("Cannot read image from camera")
+		}
+
+		if img.Empty() {
+			log.Fatalf("Captured image empty")
+		}
+
+		if ok := gocv.IMWrite(inputPath, img); !ok {
+			log.Fatalf("Failed to save captured image")
+		}
+
+		binary, err := vision.ProcessImage(inputPath, outputImgPath)
+		if err != nil {
+			log.Fatalf("Failed to process image: %v", err)
+		}
+
+		fmt.Println("Binary:\n", binary)
+	}
     }
 }
 
