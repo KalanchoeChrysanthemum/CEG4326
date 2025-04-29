@@ -93,10 +93,21 @@ void loop() {
     // In this sample we use the second sector,
     // that is: sector #1, covering block #4 up to and including block #7
     byte sector         = 1;
+    // change from four or five depending on what data is desired to be loaded
     byte blockAddr      = 4;
+
+    // data for block 4
    byte dataBlock[16] = {
     0x55, 0xF8, 0xB9, 0x69, 0xF2, 0xA7, 0xC3, 0x3C,
     0xFB, 0x87, 0xED, 0xAA, 0x2D, 0x1A, 0xFA, 0xFD
+};
+
+    // data for block 5
+     byte dataBlock[16] = {
+    0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x77, 0x30, 0x30,
+    0x37, 0x6D, 0x61, 0x71
 };
 
     byte trailerBlock   = 7;
